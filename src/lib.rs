@@ -39,6 +39,10 @@ impl GeyserPlugin for GeyserPluginImpl {
         );
         Ok(())
     }
+
+    fn transaction_notifications_enabled(&self) -> bool {
+        true
+    }
 }
 
 #[no_mangle]
