@@ -1,10 +1,10 @@
+use log::info;
 use solana_geyser_plugin_interface::geyser_plugin_interface::Result;
 use solana_geyser_plugin_interface::geyser_plugin_interface::{
     GeyserPlugin, ReplicaTransactionInfoVersions,
 };
 use solana_sdk::clock::Slot;
 use std::fmt::Debug;
-use tracing::info;
 
 #[derive(Debug)]
 struct GeyserPluginImpl;

@@ -10,4 +10,4 @@ crate-type = ["cdylib"]
 solana-geyser-plugin-interface = "=1.17.31"
 solana-sdk = "=1.17.31"
 solana-logger = "=1.17.31"
-tracing = "0.1.40"
+log = "0.4.21"
