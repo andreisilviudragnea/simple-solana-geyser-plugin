@@ -4,6 +4,7 @@ use solana_geyser_plugin_interface::geyser_plugin_interface::{
 };
 use solana_sdk::clock::Slot;
 use std::fmt::Debug;
+use tracing::info;
 
 #[derive(Debug)]
 struct GeyserPluginImpl;
@@ -18,7 +19,7 @@ impl GeyserPlugin for GeyserPluginImpl {
         transaction: ReplicaTransactionInfoVersions,
         slot: Slot,
     ) -> Result<()> {
-        println!(
+        info!(
             "notify_transaction(slot={slot}, transaction={})",
             match transaction {
                 ReplicaTransactionInfoVersions::V0_0_1(replica_transaction_info) => {
