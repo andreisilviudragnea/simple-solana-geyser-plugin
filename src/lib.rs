@@ -14,6 +14,13 @@ impl GeyserPlugin for GeyserPluginImpl {
         "GeyserPluginImpl"
     }
 
+    fn on_load(&mut self, config_file: &str) -> Result<()> {
+        solana_logger::setup_with_default("info");
+        info!("on_load(config_file={:#?})", config_file);
+
+        Ok(())
+    }
+
     fn notify_transaction(
         &self,
         transaction: ReplicaTransactionInfoVersions,
