@@ -4,6 +4,7 @@ use solana_geyser_plugin_interface::geyser_plugin_interface::{
     GeyserPlugin, ReplicaTransactionInfoVersions,
 };
 use solana_sdk::clock::Slot;
+use solana_sdk::signature::Signature;
 use std::fmt::Debug;
 
 #[derive(Debug)]
@@ -26,22 +27,41 @@ impl GeyserPlugin for GeyserPluginImpl {
         transaction: ReplicaTransactionInfoVersions,
         slot: Slot,
     ) -> Result<()> {
-        info!(
-            "notify_transaction(slot={slot}, transaction={})",
-            match transaction {
-                ReplicaTransactionInfoVersions::V0_0_1(replica_transaction_info) => {
-                    format!("{:#?}", replica_transaction_info)
+        if transaction.signature().to_string() == "4QdDG3fjk4vLLHEpxrFYUMux49Eg4vVaynaiKA9fJR64ZSoEcBA4xPpSYAfnSxoB1p2GQAruh8fPoXsUgX5YdZsj" {
+            info!(
+                "notify_transaction(slot={slot}, transaction={})",
+                match transaction {
+                    ReplicaTransactionInfoVersions::V0_0_1(replica_transaction_info) => {
+                        format!("{:#?}", replica_transaction_info)
+                    }
+                    ReplicaTransactionInfoVersions::V0_0_2(replica_transaction_info_v2) => {
+                        format!("{:#?}", replica_transaction_info_v2)
+                    }
                 }
-                ReplicaTransactionInfoVersions::V0_0_2(replica_transaction_info_v2) => {
-                    format!("{:#?}", replica_transaction_info_v2)
-                }
-            }
-        );
+            );
+        }
         Ok(())
     }
 
     fn transaction_notifications_enabled(&self) -> bool {
         true
+    }
+}
+
+trait ReplicaTransactionInfoVersionsExt {
+    fn signature(&self) -> &Signature;
+}
+
+impl ReplicaTransactionInfoVersionsExt for ReplicaTransactionInfoVersions<'_> {
+    fn signature(&self) -> &Signature {
+        match self {
+            ReplicaTransactionInfoVersions::V0_0_1(replica_transaction_info) => {
+                replica_transaction_info.signature
+            }
+            ReplicaTransactionInfoVersions::V0_0_2(replica_transaction_info_v2) => {
+                replica_transaction_info_v2.signature
+            }
+        }
     }
 }
 
