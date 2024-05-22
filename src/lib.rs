@@ -21,7 +21,7 @@ impl GeyserPlugin for GeyserPluginImpl {
 
     fn on_load(&mut self, config_file: &str) -> Result<()> {
         solana_logger::setup_with_default("info");
-        info!("on_load(config_file={:#?})", config_file);
+        info!("on_load(config_file={:?})", config_file);
 
         Ok(())
     }
@@ -37,7 +37,7 @@ impl GeyserPlugin for GeyserPluginImpl {
         is_startup: bool,
     ) -> Result<()> {
         info!(
-            "update_account(account={:#?}, slot={slot}, is_startup={is_startup})",
+            "update_account(account={:?}, slot={slot}, is_startup={is_startup})",
             match account {
                 ReplicaAccountInfoVersions::V0_0_1(_) | ReplicaAccountInfoVersions::V0_0_2(_) =>
                     unreachable!(),
@@ -73,7 +73,7 @@ impl GeyserPlugin for GeyserPluginImpl {
             match transaction {
                 ReplicaTransactionInfoVersions::V0_0_1(_) => unreachable!(),
                 ReplicaTransactionInfoVersions::V0_0_2(replica_transaction_info_v2) => {
-                    format!("{replica_transaction_info_v2:#?}")
+                    format!("{replica_transaction_info_v2:?}")
                 }
             }
         );
@@ -82,7 +82,7 @@ impl GeyserPlugin for GeyserPluginImpl {
 
     fn notify_entry(&self, entry: ReplicaEntryInfoVersions) -> Result<()> {
         info!(
-            "notify_entry(entry={:#?})",
+            "notify_entry(entry={:?})",
             match entry {
                 ReplicaEntryInfoVersions::V0_0_1(replica_entry_info) => replica_entry_info,
             }
@@ -92,7 +92,7 @@ impl GeyserPlugin for GeyserPluginImpl {
 
     fn notify_block_metadata(&self, blockinfo: ReplicaBlockInfoVersions) -> Result<()> {
         info!(
-            "notify_block_metadata(blockinfo={:#?})",
+            "notify_block_metadata(blockinfo={:?})",
             match blockinfo {
                 ReplicaBlockInfoVersions::V0_0_1(_) | ReplicaBlockInfoVersions::V0_0_2(_) =>
                     unreachable!(),
