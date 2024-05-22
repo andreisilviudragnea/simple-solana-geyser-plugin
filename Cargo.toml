@@ -7,7 +7,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-solana-geyser-plugin-interface = "=1.17.31"
-solana-sdk = "=1.17.31"
-solana-logger = "=1.17.31"
+solana-geyser-plugin-interface = "=1.17.34"
+solana-sdk = "=1.17.34"
+solana-logger = "=1.17.34"
 log = "0.4.21"
