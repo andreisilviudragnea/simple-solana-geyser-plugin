@@ -46,7 +46,7 @@ impl GeyserPlugin for GeyserPluginImpl {
             ReplicaAccountInfoVersions::V0_0_3(replica_account_info_v3) => replica_account_info_v3,
         };
         info!(
-            "update_account(slot={slot}, pubkey={}, owner={}, executable={}, write_version={}, txn_signature={:?}, is_startup={is_startup})",
+            "update_account(slot={slot}, pubkey={}, owner={}, executable={}, write_version={}, tx_sig={:?}, is_startup={is_startup})",
             Pubkey::try_from(replica_account_info_v3.pubkey).unwrap(),
             Pubkey::try_from(replica_account_info_v3.owner).unwrap(),
             replica_account_info_v3.executable,
@@ -76,14 +76,15 @@ impl GeyserPlugin for GeyserPluginImpl {
         transaction: ReplicaTransactionInfoVersions,
         slot: Slot,
     ) -> Result<()> {
-        info!(
-            "notify_transaction(slot={slot}, transaction={})",
-            match transaction {
-                ReplicaTransactionInfoVersions::V0_0_1(_) => unreachable!(),
-                ReplicaTransactionInfoVersions::V0_0_2(replica_transaction_info_v2) => {
-                    format!("{replica_transaction_info_v2:?}")
-                }
+        let replica_transaction_info_v2 = match transaction {
+            ReplicaTransactionInfoVersions::V0_0_1(_) => unreachable!(),
+            ReplicaTransactionInfoVersions::V0_0_2(replica_transaction_info_v2) => {
+                replica_transaction_info_v2
             }
+        };
+        info!(
+            "notify_transaction(slot={slot}, sig={})",
+            replica_transaction_info_v2.signature
         );
         Ok(())
     }
