@@ -1,8 +1,12 @@
+#![deny(warnings)]
+#![deny(clippy::all, clippy::pedantic, clippy::nursery)]
+
 use log::info;
-use solana_geyser_plugin_interface::geyser_plugin_interface::Result;
 use solana_geyser_plugin_interface::geyser_plugin_interface::{
-    GeyserPlugin, ReplicaTransactionInfoVersions,
+    GeyserPlugin, ReplicaBlockInfoVersions, ReplicaEntryInfoVersions,
+    ReplicaTransactionInfoVersions, SlotStatus,
 };
+use solana_geyser_plugin_interface::geyser_plugin_interface::{ReplicaAccountInfoVersions, Result};
 use solana_sdk::clock::Slot;
 use solana_sdk::signature::Signature;
 use std::fmt::Debug;
@@ -22,28 +26,91 @@ impl GeyserPlugin for GeyserPluginImpl {
         Ok(())
     }
 
+    fn on_unload(&mut self) {
+        info!("on_unload()");
+    }
+
+    fn update_account(
+        &self,
+        account: ReplicaAccountInfoVersions,
+        slot: Slot,
+        is_startup: bool,
+    ) -> Result<()> {
+        info!(
+            "update_account(account={:#?}, slot={slot}, is_startup={is_startup})",
+            match account {
+                ReplicaAccountInfoVersions::V0_0_1(_) | ReplicaAccountInfoVersions::V0_0_2(_) =>
+                    unreachable!(),
+                ReplicaAccountInfoVersions::V0_0_3(replica_account_info_v3) =>
+                    replica_account_info_v3,
+            }
+        );
+        Ok(())
+    }
+
+    fn notify_end_of_startup(&self) -> Result<()> {
+        info!("notify_end_of_startup()");
+        Ok(())
+    }
+
+    fn update_slot_status(
+        &self,
+        slot: Slot,
+        parent: Option<u64>,
+        status: SlotStatus,
+    ) -> Result<()> {
+        info!("update_slot_status(slot={slot}, parent={parent:?}, status={status:?})");
+        Ok(())
+    }
+
     fn notify_transaction(
         &self,
         transaction: ReplicaTransactionInfoVersions,
         slot: Slot,
     ) -> Result<()> {
-        if transaction.signature().to_string() == "4QdDG3fjk4vLLHEpxrFYUMux49Eg4vVaynaiKA9fJR64ZSoEcBA4xPpSYAfnSxoB1p2GQAruh8fPoXsUgX5YdZsj" {
-            info!(
-                "notify_transaction(slot={slot}, transaction={})",
-                match transaction {
-                    ReplicaTransactionInfoVersions::V0_0_1(replica_transaction_info) => {
-                        format!("{:#?}", replica_transaction_info)
-                    }
-                    ReplicaTransactionInfoVersions::V0_0_2(replica_transaction_info_v2) => {
-                        format!("{:#?}", replica_transaction_info_v2)
-                    }
+        info!(
+            "notify_transaction(slot={slot}, transaction={})",
+            match transaction {
+                ReplicaTransactionInfoVersions::V0_0_1(_) => unreachable!(),
+                ReplicaTransactionInfoVersions::V0_0_2(replica_transaction_info_v2) => {
+                    format!("{replica_transaction_info_v2:#?}")
                 }
-            );
-        }
+            }
+        );
         Ok(())
     }
 
+    fn notify_entry(&self, entry: ReplicaEntryInfoVersions) -> Result<()> {
+        info!(
+            "notify_entry(entry={:#?})",
+            match entry {
+                ReplicaEntryInfoVersions::V0_0_1(replica_entry_info) => replica_entry_info,
+            }
+        );
+        Ok(())
+    }
+
+    fn notify_block_metadata(&self, blockinfo: ReplicaBlockInfoVersions) -> Result<()> {
+        info!(
+            "notify_block_metadata(blockinfo={:#?})",
+            match blockinfo {
+                ReplicaBlockInfoVersions::V0_0_1(_) | ReplicaBlockInfoVersions::V0_0_2(_) =>
+                    unreachable!(),
+                ReplicaBlockInfoVersions::V0_0_3(replica_block_info_v3) => replica_block_info_v3,
+            }
+        );
+        Ok(())
+    }
+
+    fn account_data_notifications_enabled(&self) -> bool {
+        true
+    }
+
     fn transaction_notifications_enabled(&self) -> bool {
+        true
+    }
+
+    fn entry_notifications_enabled(&self) -> bool {
         true
     }
 }
@@ -69,7 +136,7 @@ impl ReplicaTransactionInfoVersionsExt for ReplicaTransactionInfoVersions<'_> {
 #[allow(improper_ctypes_definitions)]
 /// # Safety
 ///
-/// Return GeyserPlugin
+/// Return `GeyserPlugin`
 pub unsafe extern "C" fn _create_plugin() -> *mut dyn GeyserPlugin {
     Box::into_raw(Box::new(GeyserPluginImpl))
 }
