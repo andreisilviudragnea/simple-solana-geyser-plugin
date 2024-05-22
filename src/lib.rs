@@ -8,7 +8,9 @@ use solana_geyser_plugin_interface::geyser_plugin_interface::{
 };
 use solana_geyser_plugin_interface::geyser_plugin_interface::{ReplicaAccountInfoVersions, Result};
 use solana_sdk::clock::Slot;
+use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::Signature;
+use solana_sdk::transaction::SanitizedTransaction;
 use std::fmt::Debug;
 
 #[derive(Debug)]
@@ -36,14 +38,19 @@ impl GeyserPlugin for GeyserPluginImpl {
         slot: Slot,
         is_startup: bool,
     ) -> Result<()> {
-        info!(
-            "update_account(account={:?}, slot={slot}, is_startup={is_startup})",
-            match account {
-                ReplicaAccountInfoVersions::V0_0_1(_) | ReplicaAccountInfoVersions::V0_0_2(_) =>
-                    unreachable!(),
-                ReplicaAccountInfoVersions::V0_0_3(replica_account_info_v3) =>
-                    replica_account_info_v3,
+        let replica_account_info_v3 = match account {
+            ReplicaAccountInfoVersions::V0_0_1(_) | ReplicaAccountInfoVersions::V0_0_2(_) => {
+                unreachable!()
             }
+            ReplicaAccountInfoVersions::V0_0_3(replica_account_info_v3) => replica_account_info_v3,
+        };
+        info!(
+            "update_account(slot={slot}, pubkey={}, owner={}, executable={}, write_version={}, txn_signature={:?}, is_startup={is_startup})",
+            Pubkey::try_from(replica_account_info_v3.pubkey).unwrap(),
+            Pubkey::try_from(replica_account_info_v3.owner).unwrap(),
+            replica_account_info_v3.executable,
+            replica_account_info_v3.write_version,
+            replica_account_info_v3.txn.map(SanitizedTransaction::signature),
         );
         Ok(())
     }
