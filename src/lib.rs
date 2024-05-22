@@ -103,13 +103,23 @@ impl GeyserPlugin for GeyserPluginImpl {
     }
 
     fn notify_block_metadata(&self, blockinfo: ReplicaBlockInfoVersions) -> Result<()> {
-        info!(
-            "notify_block_metadata(blockinfo={:?})",
-            match blockinfo {
-                ReplicaBlockInfoVersions::V0_0_1(_) | ReplicaBlockInfoVersions::V0_0_2(_) =>
-                    unreachable!(),
-                ReplicaBlockInfoVersions::V0_0_3(replica_block_info_v3) => replica_block_info_v3,
+        let replica_block_info_v3 = match blockinfo {
+            ReplicaBlockInfoVersions::V0_0_1(_) | ReplicaBlockInfoVersions::V0_0_2(_) => {
+                unreachable!()
             }
+            ReplicaBlockInfoVersions::V0_0_3(replica_block_info_v3) => replica_block_info_v3,
+        };
+        info!(
+            "notify_block_metadata(slot={}, blockhash={}, parent_slot={}, parent_blockhash={}, rewards={:?}, block_time={:?}, block_height={:?}, executed_tx_count={}, entry_count={})",
+            replica_block_info_v3.slot,
+            replica_block_info_v3.blockhash,
+            replica_block_info_v3.parent_slot,
+            replica_block_info_v3.parent_blockhash,
+            replica_block_info_v3.rewards,
+            replica_block_info_v3.block_time,
+            replica_block_info_v3.block_height,
+            replica_block_info_v3.executed_transaction_count,
+            replica_block_info_v3.entry_count
         );
         Ok(())
     }
