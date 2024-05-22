@@ -8,6 +8,7 @@ use solana_geyser_plugin_interface::geyser_plugin_interface::{
 };
 use solana_geyser_plugin_interface::geyser_plugin_interface::{ReplicaAccountInfoVersions, Result};
 use solana_sdk::clock::Slot;
+use solana_sdk::hash::Hash;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::Signature;
 use solana_sdk::transaction::SanitizedTransaction;
@@ -88,11 +89,14 @@ impl GeyserPlugin for GeyserPluginImpl {
     }
 
     fn notify_entry(&self, entry: ReplicaEntryInfoVersions) -> Result<()> {
+        let ReplicaEntryInfoVersions::V0_0_1(replica_entry_info) = entry;
         info!(
-            "notify_entry(entry={:?})",
-            match entry {
-                ReplicaEntryInfoVersions::V0_0_1(replica_entry_info) => replica_entry_info,
-            }
+            "notify_entry(slot={}, index={}, num_hashes={:?}, hash={}, executed_tx_count={})",
+            replica_entry_info.slot,
+            replica_entry_info.index,
+            replica_entry_info.num_hashes,
+            Hash::new(replica_entry_info.hash),
+            replica_entry_info.executed_transaction_count
         );
         Ok(())
     }
