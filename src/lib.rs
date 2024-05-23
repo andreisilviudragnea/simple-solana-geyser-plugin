@@ -83,8 +83,10 @@ impl GeyserPlugin for GeyserPluginImpl {
             }
         };
         info!(
-            "notify_transaction(slot={slot}, sig={})",
-            replica_transaction_info_v2.signature
+            "notify_transaction(slot={slot}, sig={}, is_vote={}, index={})",
+            replica_transaction_info_v2.signature,
+            replica_transaction_info_v2.is_vote,
+            replica_transaction_info_v2.index
         );
         Ok(())
     }
