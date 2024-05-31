@@ -88,6 +88,10 @@ impl GeyserPlugin for GeyserPluginImpl {
             replica_transaction_info_v2.is_vote,
             replica_transaction_info_v2.index
         );
+        assert_eq!(
+            replica_transaction_info_v2.signature,
+            replica_transaction_info_v2.transaction.signature()
+        );
         Ok(())
     }
 
