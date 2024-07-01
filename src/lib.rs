@@ -22,7 +22,7 @@ impl GeyserPlugin for GeyserPluginImpl {
         "GeyserPluginImpl"
     }
 
-    fn on_load(&mut self, config_file: &str) -> Result<()> {
+    fn on_load(&mut self, config_file: &str, _is_reload: bool) -> Result<()> {
         solana_logger::setup_with_default("info");
         info!("on_load(config_file={:?})", config_file);
 
@@ -96,14 +96,17 @@ impl GeyserPlugin for GeyserPluginImpl {
     }
 
     fn notify_entry(&self, entry: ReplicaEntryInfoVersions) -> Result<()> {
-        let ReplicaEntryInfoVersions::V0_0_1(replica_entry_info) = entry;
+        let replica_entry_info_v2 = match entry {
+            ReplicaEntryInfoVersions::V0_0_1(_) => unreachable!(),
+            ReplicaEntryInfoVersions::V0_0_2(replica_entry_info_v2) => replica_entry_info_v2,
+        };
         info!(
             "notify_entry(slot={}, index={}, num_hashes={:?}, hash={}, executed_tx_count={})",
-            replica_entry_info.slot,
-            replica_entry_info.index,
-            replica_entry_info.num_hashes,
-            Hash::new(replica_entry_info.hash),
-            replica_entry_info.executed_transaction_count
+            replica_entry_info_v2.slot,
+            replica_entry_info_v2.index,
+            replica_entry_info_v2.num_hashes,
+            Hash::new(replica_entry_info_v2.hash),
+            replica_entry_info_v2.executed_transaction_count
         );
         Ok(())
     }
