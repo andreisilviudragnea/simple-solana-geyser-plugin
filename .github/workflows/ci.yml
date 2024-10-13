@@ -19,7 +19,7 @@ jobs:
       - name: Install Protoc
         uses: arduino/setup-protoc@v1
       - name: Cache Dependencies
-        uses: Swatinem/rust-cache@v2.7.3
+        uses: Swatinem/rust-cache@v2.7.5
       - name: cargo fmt --all --check
         uses: actions-rs/cargo@v1
         with:
