@@ -8,6 +8,6 @@ crate-type = ["cdylib"]
 
 [dependencies]
 solana-geyser-plugin-interface = "=1.18.17"
-solana-sdk = "=1.18.17"
+solana-sdk = "=1.18.26"
 solana-logger = "=1.18.17"
 log = "0.4.22"
