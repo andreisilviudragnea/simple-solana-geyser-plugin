@@ -17,7 +17,7 @@ jobs:
           override: true
           components: rustfmt, clippy
       - name: Install Protoc
-        uses: arduino/setup-protoc@v1
+        uses: arduino/setup-protoc@v3.0.0
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2.7.3
       - name: cargo fmt --all --check
